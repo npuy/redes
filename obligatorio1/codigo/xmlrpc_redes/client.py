@@ -38,3 +38,4 @@ def connect(host, port):
 
 class Client:
     connect = staticmethod(connect)
+
