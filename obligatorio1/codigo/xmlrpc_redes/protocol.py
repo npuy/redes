@@ -1,17 +1,39 @@
 import xml.etree.ElementTree as ET
+import datetime as dt
 
 # ---------- XML-RPC helpers ----------
 
 def parse_value(elem):
-    if elem.find('int') is not None or elem.find('i4') is not None:
-        t = elem.find('int') or elem.find('i4')
-        return int(t.text)
+    if elem.find('int') is not None:
+        return int(elem.find('int').text)
+    if elem.find('i4') is not None:
+        return int(elem.find('i4').text)
     if elem.find('boolean') is not None:
         return bool(int(elem.find('boolean').text))
     if elem.find('double') is not None:
         return float(elem.find('double').text)
     if elem.find('string') is not None:
         return elem.find('string').text or ''
+    if elem.find('dateTime.iso8601') is not None:
+        return dt.datetime.fromisoformat(elem.find('dateTime.iso8601').text)
+    if elem.find('array') is not None:
+        data = elem.find('array').find('data')
+        ret = []
+        for val in data:
+            if val.tag != 'value':
+                raise Exception('Error parseo de XML')
+            ret.append(parse_value(val))
+        return ret
+    if elem.find('struct') is not None:
+        data = elem.find('struct')
+        ret = {}
+        for val in data:
+            if val.tag != 'member':
+                raise Exception('Error parseo de XML')
+            ret[val.find('name').text] = parse_value(val.find('value'))
+        return ret
+    if elem.find('base64') is not None:
+        return elem.find('base64').text.encode()
     if elem.text and elem.text.strip():
         return elem.text.strip()
     return ''
@@ -24,6 +46,22 @@ def build_value_element(pyval):
         ET.SubElement(v, 'int').text = str(pyval)
     elif isinstance(pyval, float):
         ET.SubElement(v, 'double').text = repr(pyval)
+    elif isinstance(pyval, dt.datetime):
+        print(pyval.isoformat())
+        ET.SubElement(v, 'dateTime.iso8601').text = pyval.strftime("%Y%m%dT%H:%M:%S")
+    elif isinstance(pyval, list):
+        arr = ET.SubElement(v, 'array')
+        data = ET.SubElement(arr, 'data')
+        for ele in pyval:
+            data.append(build_value_element(ele))
+    elif isinstance(pyval, dict):
+        struct = ET.SubElement(v, 'struct')
+        for k, val in pyval.items():
+            mem = ET.SubElement(struct, 'member')
+            ET.SubElement(mem, 'name').text = k
+            mem.append(build_value_element(val))
+    elif isinstance(pyval, (bytes, bytearray)):
+        ET.SubElement(v, 'base64').text = pyval.decode()
     else:
         ET.SubElement(v, 'string').text = str(pyval)
     return v
