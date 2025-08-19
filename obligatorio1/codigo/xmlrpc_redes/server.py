@@ -1,6 +1,7 @@
 import socket
 import threading
-from . import protocol
+from . import xml
+from . import http
 
 class Server:
     def __init__(self, address):
@@ -12,42 +13,39 @@ class Server:
 
     def _handle_connection(self, conn, addr):
         try:
-            data = b''
-            while b'\r\n\r\n' not in data:
-                chunk = conn.recv(4096)
-                if not chunk: return
-                data += chunk
-            method, path, proto, headers, body = protocol.parse_http_request(data)
-            cl = int(headers.get('content-length', '0'))
-            while len(body) < cl:
-                body += conn.recv(cl - len(body))
+            method, path, proto, headers, body = http.get_http_request(conn)
 
             if method != 'POST':
-                conn.sendall(protocol.build_http_response(b'Method Not Allowed', 405, 'Method Not Allowed'))
+                conn.sendall(http.build_http_response(b'Method Not Allowed', 405, 'Method Not Allowed'))
                 return
 
             try:
-                method_name, params = protocol.parse_xmlrpc_request(body)
+                method_name, params = xml.parse_xmlrpc_request(body)
             except Exception as e:
-                resp = protocol.build_xmlrpc_fault(400, f'Invalid XML: {e}')
-                conn.sendall(protocol.build_http_response(resp))
+                resp = xml.build_xmlrpc_fault(1, f'Error parseo de XML: {e}')
+                conn.sendall(http.build_http_response(resp))
                 return
 
             func = self.methods.get(method_name)
             if func is None:
-                resp = protocol.build_xmlrpc_fault(1, f'Method {method_name} not found')
-                conn.sendall(protocol.build_http_response(resp))
+                resp = xml.build_xmlrpc_fault(2, f'No existe el método invocado: Método {method_name}')
+                conn.sendall(http.build_http_response(resp))
                 return
 
             try:
                 result = func(*params)
-                resp = protocol.build_xmlrpc_response(result)
+                resp = xml.build_xmlrpc_response(result)
+            except TypeError as e:
+                resp = xml.build_xmlrpc_fault(3, f'Error en parámetros del método invocado: {e}')
             except Exception as e:
-                resp = protocol.build_xmlrpc_fault(2, f'Execution error: {e}')
-
-            conn.sendall(protocol.build_http_response(resp))
+                resp = xml.build_xmlrpc_fault(4, f'Error interno en la ejecución del método: {e}')
+        except Exception as e:
+            resp = xml.build_xmlrpc_fault(5, f'Error inesperado en el servidor: {e}')
         finally:
-            conn.close()
+            try:
+                conn.sendall(http.build_http_response(resp))
+            finally:
+                conn.close()
 
     def serve(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

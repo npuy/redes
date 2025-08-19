@@ -87,6 +87,26 @@ def build_xmlrpc_request(method_name, params):
         param.append(build_value_element(p))
     return ET.tostring(methodCall, encoding='utf-8', xml_declaration=True)
 
+def parse_xmlrpc_response(body_bytes):
+    root = ET.fromstring(body_bytes.decode('utf-8'))
+    fault = root.find('fault')
+    if fault is not None:
+        struct = fault.find('value').find('struct')
+        code, msg = None, None
+        for member in struct.findall('member'):
+            name = member.find('name').text
+            val = member.find('value')
+            if name == 'faultCode':
+                code = int(val.find('int').text)
+            elif name == 'faultString':
+                msg = val.find('string').text
+        raise Exception(f'Error XML-RPC {code}: {msg}')
+
+    params = root.find('params')
+    if params is None:
+        return None
+    return parse_value(params.find('param').find('value'))
+
 def build_xmlrpc_response(result):
     methodResponse = ET.Element('methodResponse')
     params = ET.SubElement(methodResponse, 'params')
@@ -112,45 +132,3 @@ def build_xmlrpc_fault(code, message):
 
     return ET.tostring(methodResponse, encoding='utf-8', xml_declaration=True)
 
-def parse_xmlrpc_response(body_bytes):
-    root = ET.fromstring(body_bytes.decode('utf-8'))
-    fault = root.find('fault')
-    if fault is not None:
-        struct = fault.find('value').find('struct')
-        code, msg = None, None
-        for member in struct.findall('member'):
-            name = member.find('name').text
-            val = member.find('value')
-            if name == 'faultCode':
-                code = int(val.find('int').text)
-            elif name == 'faultString':
-                msg = val.find('string').text
-        raise Exception(f'XML-RPC Fault {code}: {msg}')
-
-    params = root.find('params')
-    if params is None:
-        return None
-    return parse_value(params.find('param').find('value'))
-
-# ---------- HTTP helpers ----------
-
-def parse_http_request(raw):
-    sep = b'\r\n\r\n'
-    head, body = raw.split(sep, 1) if sep in raw else (raw, b'')
-    lines = head.decode('iso-8859-1').split('\r\n')
-    request_line = lines[0]
-    method, path, proto = request_line.split(' ', 2)
-    headers = {}
-    for line in lines[1:]:
-        if not line: continue
-        k, v = line.split(':', 1)
-        headers[k.strip().lower()] = v.strip()
-    return method, path, proto, headers, body
-
-def build_http_request(host, port, body_bytes):
-    req = f"POST /RPC2 HTTP/1.1\r\nHost: {host}:{port}\r\nContent-Type: text/xml\r\nContent-Length: {len(body_bytes)}\r\n\r\n".encode()
-    return req + body_bytes
-
-def build_http_response(body_bytes, status=200, status_text='OK'):
-    h = f'HTTP/1.1 {status} {status_text}\r\nContent-Length: {len(body_bytes)}\r\nContent-Type: text/xml; charset=utf-8\r\n\r\n'
-    return h.encode('iso-8859-1') + body_bytes
