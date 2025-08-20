@@ -22,7 +22,7 @@ def existe(l, x):
             return True
     return False
 
-def agregrarElemento(m, k, v):
+def agregarElemento(m, k, v):
     m[k] = v
     return m
 
