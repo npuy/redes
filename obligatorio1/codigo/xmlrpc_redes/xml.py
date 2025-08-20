@@ -47,8 +47,7 @@ def build_value_element(pyval):
     elif isinstance(pyval, float):
         ET.SubElement(v, 'double').text = repr(pyval)
     elif isinstance(pyval, dt.datetime):
-        print(pyval.isoformat())
-        ET.SubElement(v, 'dateTime.iso8601').text = pyval.strftime("%Y%m%dT%H:%M:%S")
+        ET.SubElement(v, 'dateTime.iso8601').text = str(pyval.isoformat())
     elif isinstance(pyval, list):
         arr = ET.SubElement(v, 'array')
         data = ET.SubElement(arr, 'data')
@@ -88,7 +87,6 @@ def build_xmlrpc_request(method_name, params):
     return ET.tostring(methodCall, encoding='utf-8', xml_declaration=True)
 
 def parse_xmlrpc_response(body_bytes):
-    print("Respuesta recibida:\n", body_bytes.decode('utf-8'))
     root = ET.fromstring(body_bytes.decode('utf-8'))
     fault = root.find('fault')
     if fault is not None:

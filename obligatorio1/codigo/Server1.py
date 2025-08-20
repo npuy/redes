@@ -1,4 +1,5 @@
 import xmlrpc_redes as xmlrpc
+import datetime
 
 def construirListaEnteros(a, b):
     lista = []
@@ -25,16 +26,21 @@ def agregrarElemento(m, k, v):
     m[k] = v
     return m
 
+def fechaHora(d, m, a, hh, mm, ss):
+    return datetime.datetime(a, m, d, hh, mm, ss)
+
+""""
 print('Por favor ingrese la IP del servidor: ')
 my_ip = str(input())
 print('Por favor ingrese el Puerto del servidor: ')
 my_port = int(input())
-
-server = xmlrpc.Server((my_ip, my_port))
+"""
+server = xmlrpc.Server(("127.0.0.1", 8000))
 
 server.add_method(construirListaEnteros)
 server.add_method(divisionReales)
 server.add_method(existe)
 server.add_method(agregrarElemento)
+server.add_method(fechaHora)
 
 server.serve()
