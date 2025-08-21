@@ -6,7 +6,7 @@ from . import http
 class Server:
     def __init__(self, address):
         self.host, self.port = address
-        self.methods = {}
+        self.methods = {} #diccionario para guardar métodos registrados
 
     def add_method(self, func):
         self.methods[func.__name__] = func
@@ -48,12 +48,15 @@ class Server:
                 conn.close()
 
     def serve(self):
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        s.bind((self.host, self.port))
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # Crear un socket TCP
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) #permite reutilizar la dir y puerto sin esperar a que se libere
+        s.bind((self.host, self.port))  #asocia socket a (IP-PUERTO)
         s.listen(5)
         print(f"XMLRPC Server listening on {self.host}:{self.port}")
         while True:
             conn, addr = s.accept()
-            t = threading.Thread(target=self._handle_connection, args=(conn, addr), daemon=True)
-            t.start()
+            t = threading.Thread(target=self._handle_connection, # función que atiende al cliente
+                                 args=(conn, addr),              # socket y dirección del cliente   
+                                 daemon=True)                    # el hilo se cierra automáticamente al terminar el programa
+            # Arranca el hilo que procesa la conexión
+            t.start() 
