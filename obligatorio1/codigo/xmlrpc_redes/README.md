@@ -20,7 +20,7 @@ Esta biblioteca utiliza las primitivas de la **API de sockets del curso INCO** p
 
 ### Llamadas a métodos remotos
 
-`conn.suma(2,3)
+`conn.suma(2,3)`
 
 **Flujo interno:**
 
@@ -84,7 +84,7 @@ Esta biblioteca utiliza las primitivas de la **API de sockets del curso INCO** p
     
 - `build_xmlrpc_fault(code, message)` → genera fault XML-RPC en caso de error.
 
-## 4️ Concurrencia
+## 4️⃣ Concurrencia
 
 Cada conexión se maneja en un **hilo independiente** para permitir que el servidor atienda múltiples clientes concurrentemente.
 
