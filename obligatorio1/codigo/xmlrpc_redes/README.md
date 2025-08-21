@@ -98,7 +98,7 @@ Cada conexión se maneja en un **hilo independiente** para permitir que el servi
 Libera los puertos y la memoria asociados al socket.
 
 
-## 6️⃣ Cierre de Recursos
+## 6️⃣ Flujo de Comunicación Cliente ↔ Servidor
 
 |Cliente Python|Flujo|Servidor Python|
 |:--|:-:|:--|
