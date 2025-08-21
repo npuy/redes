@@ -9,7 +9,7 @@ def get_http(conn):
 
     sep = b'\r\n\r\n'
     head, body = data.split(sep, 1) if sep in data else (data, b'')
-    lines = head.decode('iso-8859-1').split('\r\n')
+    lines = head.decode().split('\r\n')
     start_line = lines[0]
     start_line_first, start_line_second, start_line_third = start_line.split(' ', 2)
 
@@ -38,5 +38,5 @@ def build_http_request(host, port, body_bytes):
     return req + body_bytes
 
 def build_http_response(body_bytes, status=200, status_text='OK'):
-    h = f'HTTP/1.1 {status} {status_text}\r\nContent-Length: {len(body_bytes)}\r\nContent-Type: text/xml; charset=utf-8\r\n\r\n'
-    return h.encode('iso-8859-1') + body_bytes
+    h = f'HTTP/1.1 {status} {status_text}\r\nContent-Length: {len(body_bytes)}\r\nContent-Type: text/xml\r\n\r\n'
+    return h.encode() + body_bytes
