@@ -1,5 +1,6 @@
 import xmlrpc_redes as xmlrpc
 import datetime
+import base64
 
 def construirFloat(a, b):
     aux = f'{a}.{b}'
@@ -16,7 +17,6 @@ def xor(a, b):
 
 def dias(f1, f2):
     return abs((f1-f2).days)
-
 
 print('Por favor ingrese la IP para el servidor1: ')
 my_ip = str(input())

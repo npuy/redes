@@ -1,4 +1,5 @@
 import xmlrpc_redes as xmlrpc
+import base64
 
 def listsToMap(l1, l2):
     m = {}
@@ -38,6 +39,22 @@ def construirListaEnteros(a, b):
         lista.append(b)
     return lista
 
+def decode(data: bytes) -> str:
+    # Convertimos el string a bytes
+    data_bytes = data
+    # Decodificamos base64
+    decoded_bytes = base64.b64decode(data_bytes)
+    # Convertimos los bytes decodificados a string
+    return decoded_bytes.decode("utf-8")
+
+def encode(data: str) -> bytes:
+    # Convertimos el string a bytes
+    data_bytes = data.encode("utf-8")
+    # Codificamos en base64
+    encoded_bytes = base64.b64encode(data_bytes)
+    # Convertimos los bytes codificados a string
+    return encoded_bytes
+
 print('Por favor ingrese la IP para el servidor2: ')
 my_ip = str(input())
 print('Por favor ingrese el Puerto para el servidor2: ')
@@ -50,5 +67,8 @@ server.add_method(concatStrings)
 server.add_method(existe)
 server.add_method(agregarElemento)
 server.add_method(construirListaEnteros)
+server.add_method(encode)
+server.add_method(decode)
+
 
 server.serve()
