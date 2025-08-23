@@ -7,7 +7,7 @@ class Connection:
     def __init__(self, host, port):
         self.host = host
         self.port = port
-
+    
     def __getattr__(self, method_name):
         def remote_call(*args):
             body = xml.build_xmlrpc_request(method_name, args)
