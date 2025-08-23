@@ -1,7 +1,16 @@
 import xml.etree.ElementTree as ET
 import datetime as dt
 
-# ---------- XML-RPC helpers ----------
+"""
+Módulo de helpers XML-RPC.
+
+Proporciona funciones para:
+- Parsear y construir requests y responses XML-RPC.
+- Convertir entre tipos de datos de Python y elementos XML-RPC.
+- Generar respuestas de error (faults) de XML-RPC.
+
+Usado por el cliente y servidor para enviar y recibir mensajes XML-RPC sobre HTTP/TCP.
+"""
 
 def parse_value(elem):
     if elem.find('int') is not None:

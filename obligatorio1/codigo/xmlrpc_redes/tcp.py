@@ -10,8 +10,10 @@ def enviar(conn, data):
             data = data[bytes_enviados:]
     except Exception as e:
         print(f'Error al enviar paquete -> {e}')
+        raise  # relanzo la excepción para que el cliente la maneje
 
 def recibir(conn):
+    conn.settimeout(10)  # 10 segundos máximo por operación de recv/send - LO DIMOS EN LA CARTILLA
     data = b''
     while b'\r\n\r\n' not in data:
         chunk = conn.recv(4096)

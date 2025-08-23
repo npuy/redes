@@ -13,9 +13,10 @@ def enviar(conn, data):
         data = data[bytes_enviados:]
         while data != b'':
             bytes_enviados = conn.send(data)
-            data = data[bytes_enviados:]
+            data = data[bytes_enviados:] 
     except Exception as e:
         print(f'Error al enviar paquete -> {e}')
+        raise
 
 class Server:
     def __init__(self, address):
@@ -26,6 +27,8 @@ class Server:
         self.methods[func.__name__] = func 
             
     def _handle_connection(self, conn, addr):
+
+        conn.settimeout(10)  # 10 segundos máximo por operación de recv/send - LO DIMOS EN LA CARTILLA
 
         # Inicializo resp como bytes
         resp = xml.build_xmlrpc_fault(1, "Error interno")

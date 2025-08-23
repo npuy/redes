@@ -1,6 +1,7 @@
 import socket
 from . import xml
 from . import http
+from .tcp import enviar  
 import time
 
 class Connection:
@@ -14,22 +15,20 @@ class Connection:
             req = http.build_http_request(self.host, self.port, body)
 
             conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            conn.connect((self.host, self.port))
+            
             try:
-                data = req
-                bytes_enviados = conn.send(data)
-                data = data[bytes_enviados:]
-                while data != b'':
-                    bytes_enviados = conn.send(data)
-                    data = data[bytes_enviados:]
-            except Exception as e:
-                print(f'Error al enviar paquete -> {e}')
-                conn.close()
-            else:
+                conn.connect((self.host, self.port))
+                enviar(conn, req)
                 proto, status_code, status_message, headers, body = http.get_http_response(conn)
-                conn.close()
                 return xml.parse_xmlrpc_response(body)
+            except Exception as e:
+                # Capturo errores de envío o recepción
+                print(f'Error en la comunicación con el servidor: {e}')
+                raise  # relanzar si queremos que el caller lo maneje
+            finally:
+                conn.close()  # siempre cerramos el socket
         return remote_call
+
 
 def connect(host, port):
     return Connection(host, port)
