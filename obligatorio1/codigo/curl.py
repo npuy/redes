@@ -7,6 +7,7 @@ curl_command = [
     "-X", "POST",
     "-H", "Content-Type: text/xml",
     "-H", "User-Agent: MiCliente/1.0",
+    ,
     "-H", "Content-Length: 1",
     "-H", "Host: 127.0.0.1:5000",
     "-d", '{"mensaje":"Hola servidor"}',
