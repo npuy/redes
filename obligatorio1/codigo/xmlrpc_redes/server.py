@@ -16,9 +16,25 @@ class Server:
             method, path, proto, headers, body = http.get_http_request(conn)
 
             if method != 'POST':
-                conn.sendall(http.build_http_response(b'Method Not Allowed', 405, 'Method Not Allowed'))
+                conn.sendall(http.build_http_response(b'Method Not Allowed', 405, 'Method Not Allowed: use POST.'))
+                return
+            
+            if headers.get('content-type') != 'text/xml':
+                conn.sendall(http.build_http_response(b'Unprocessable Entity', 422, 'Content-Type has to be text/xml.'))
+                return
+            
+            if not 'user-agent' in headers:
+                conn.sendall(http.build_http_response(b'Forbidden', 403, 'User-Agent is required.'))
                 return
 
+            if headers.get('host') != f'{self.host}:{self.port}':
+                conn.sendall(http.build_http_response(b'Bad Request', 400, 'Host is required.'))
+                return
+            
+            if not 'content-length' in headers:
+                conn.sendall(http.build_http_response(b'Length Required', 411, 'Length is required.'))
+                return
+            
             try:
                 method_name, params = xml.parse_xmlrpc_request(body)
             except Exception as e:

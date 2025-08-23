@@ -54,13 +54,14 @@ def encode(data: str) -> bytes:
     encoded_bytes = base64.b64encode(data_bytes)
     # Convertimos los bytes codificados a string
     return encoded_bytes
-
+"""
 print('Por favor ingrese la IP para el servidor2: ')
 my_ip = str(input())
 print('Por favor ingrese el Puerto para el servidor2: ')
 my_port = int(input())
+"""
 
-server = xmlrpc.Server((my_ip, int(my_port)))
+server = xmlrpc.Server(('127.0.0.1', 5001))
 
 server.add_method(listsToMap)
 server.add_method(concatStrings)

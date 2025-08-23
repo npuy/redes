@@ -1,19 +1,23 @@
 import xmlrpc_redes as xmlrpc
 import datetime
-
+"""
 print('Por favor ingrese la IP del servidor1: ')
 sv1_ip = str(input())
 print('Por favor ingrese el Puerto del servidor1: ')
 sv1_port = int(input())
-
+"""
+sv1_ip = '127.0.0.1'
+sv1_port = 5000
 conn1 = xmlrpc.Client.connect(sv1_ip, int(sv1_port))
 print(f'Conexión establecida con {sv1_ip}:{sv1_port}')
-
+"""
 print('Por favor ingrese la IP del servidor2: ')
 sv2_ip = str(input())
 print('Por favor ingrese el Puerto del servidor2: ')
 sv2_port = int(input())
-
+"""
+sv2_ip = '127.0.0.1'
+sv2_port = 5001
 conn2 = xmlrpc.Client.connect(sv2_ip, int(sv2_port))
 print(f'Conexión establecida con {sv2_ip}:{sv2_port}')
 print()

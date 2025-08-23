@@ -17,13 +17,13 @@ def xor(a, b):
 
 def dias(f1, f2):
     return abs((f1-f2).days)
-
+"""
 print('Por favor ingrese la IP para el servidor1: ')
 my_ip = str(input())
 print('Por favor ingrese el Puerto para el servidor1: ')
 my_port = int(input())
-
-server = xmlrpc.Server((my_ip, int(my_port)))
+"""
+server = xmlrpc.Server(('127.0.0.1', 5000))
 
 server.add_method(construirFloat)
 server.add_method(divisionReales)
