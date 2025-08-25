@@ -22,6 +22,11 @@ class Server:
         try:
             method, path, proto, headers, body = http.get_http_request(conn)
 
+            if proto != 'HTTP/1.1':
+                resp = xml.build_xmlrpc_fault(1, "Protocolo no soportado: use HTTP/1.1")
+                tcp.send(conn, http.build_http_response(resp, 505, 'HTTP Version Not Supported'))
+                return
+
             if method != 'POST':
                 resp = xml.build_xmlrpc_fault(1, "Método no permitido: use POST")
                 tcp.send(conn, http.build_http_response(resp, 405, 'Method Not Allowed'))
