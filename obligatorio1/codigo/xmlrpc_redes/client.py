@@ -1,8 +1,7 @@
 import socket
 from . import xml
 from . import http
-from .tcp import enviar  
-import time
+import tcp
 
 class Connection:
     def __init__(self, host, port):
@@ -18,7 +17,7 @@ class Connection:
             
             try:
                 conn.connect((self.host, self.port))
-                enviar(conn, req)
+                tcp.send(conn, req)
                 proto, status_code, status_message, headers, body = http.get_http_response(conn)
                 return xml.parse_xmlrpc_response(body)
             except Exception as e:

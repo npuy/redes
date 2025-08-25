@@ -1,13 +1,13 @@
-from .tcp import recibir 
+import tcp 
 
 def get_http_request(conn):
     # Lee un request HTTP desde el socket y devuelve start line, headers y body
-    method, path, proto, headers, body = recibir(conn)
+    method, path, proto, headers, body = tcp.receive(conn)
     return method, path, proto, headers, body
 
 def get_http_response(conn):
     # Lee una respuesta HTTP desde el socket y devuelve start line, headers y body
-    proto, status_code, status_message, headers, body = recibir(conn)
+    proto, status_code, status_message, headers, body = tcp.receive(conn)
     return proto, status_code, status_message, headers, body
 
 def build_http_request(host, port, body_bytes):

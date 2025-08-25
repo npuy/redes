@@ -1,18 +1,18 @@
-def enviar(conn, data):
+def send(conn, data):
     try:
         if not isinstance(data, bytes):
             data = data.encode('utf-8')
 
-        bytes_enviados = conn.send(data)
-        data = data[bytes_enviados:]
+        bytes_sent = conn.send(data)
+        data = data[bytes_sent:]
         while data != b'':
-            bytes_enviados = conn.send(data)
-            data = data[bytes_enviados:]
+            bytes_sent = conn.send(data)
+            data = data[bytes_sent:]
     except Exception as e:
         print(f'Error al enviar paquete -> {e}')
         raise  # relanzo la excepción para que el cliente la maneje
 
-def recibir(conn):
+def receive(conn):
     conn.settimeout(10)  # 10 segundos máximo por operación de recv/send - LO DIMOS EN LA CARTILLA
     data = b''
     while b'\r\n\r\n' not in data:
@@ -38,8 +38,8 @@ def recibir(conn):
 
     #print(headers)
 
-    tamanio = int(headers.get('content-length', '0')) #devuelve 0 si no encuentra la clave content-length
-    while len(body) < tamanio:
-        body = body + conn.recv(tamanio - len(body))
+    size = int(headers.get('content-length', '0')) #devuelve 0 si no encuentra la clave content-length
+    while len(body) < size:
+        body = body + conn.recv(size - len(body))
 
     return start_line_first, start_line_second, start_line_third, headers, body

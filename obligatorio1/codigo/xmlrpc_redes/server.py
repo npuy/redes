@@ -2,21 +2,7 @@ import socket
 import threading
 from . import xml
 from . import http
-
-# Envía todos los bytes de data usando send() de socket
-def enviar(conn, data):
-    try:
-        if not isinstance(data, bytes):
-            data = data.encode('utf-8')
-
-        bytes_enviados = conn.send(data)
-        data = data[bytes_enviados:]
-        while data != b'':
-            bytes_enviados = conn.send(data)
-            data = data[bytes_enviados:] 
-    except Exception as e:
-        print(f'Error al enviar paquete -> {e}')
-        raise
+import tcp
 
 class Server:
     def __init__(self, address):
@@ -38,40 +24,40 @@ class Server:
 
             if method != 'POST':
                 resp = xml.build_xmlrpc_fault(1, "Método no permitido: use POST")
-                enviar(conn, http.build_http_response(resp, 405, 'Method Not Allowed'))
+                tcp.send(conn, http.build_http_response(resp, 405, 'Method Not Allowed'))
                 return
             
             if headers.get('content-type') != 'text/xml':
                 resp = xml.build_xmlrpc_fault(2, "Content-Type debe ser text/xml")
-                enviar(conn, http.build_http_response(resp, 422, 'Unprocessable Entity'))
+                tcp.send(conn, http.build_http_response(resp, 422, 'Unprocessable Entity'))
                 return
             
             if 'user-agent' not in headers:
                 resp = xml.build_xmlrpc_fault(3, "User-Agent requerido")
-                enviar(conn, http.build_http_response(resp, 403, 'Forbidden'))
+                tcp.send(conn, http.build_http_response(resp, 403, 'Forbidden'))
                 return
 
             if headers.get('host') != f'{self.host}:{self.port}':
                 resp = xml.build_xmlrpc_fault(4, "Host incorrecto")
-                enviar(conn, http.build_http_response(resp, 400, 'Bad Request'))
+                tcp.send(conn, http.build_http_response(resp, 400, 'Bad Request'))
                 return
             
             if 'content-length' not in headers:
                 resp = xml.build_xmlrpc_fault(5, "Content-Length requerido")
-                enviar(conn, http.build_http_response(resp, 411, 'Length Required'))
+                tcp.send(conn, http.build_http_response(resp, 411, 'Length Required'))
                 return
             
             try:
                 method_name, params = xml.parse_xmlrpc_request(body)
             except Exception as e:
                 resp = xml.build_xmlrpc_fault(6, f'Error parseo de XML: {e}')
-                enviar(conn, http.build_http_response(resp))
+                tcp.send(conn, http.build_http_response(resp))
                 return
 
             func = self.methods.get(method_name)
             if func is None:
                 resp = xml.build_xmlrpc_fault(7, f'No existe el método invocado: {method_name}')
-                enviar(conn, http.build_http_response(resp))
+                tcp.send(conn, http.build_http_response(resp))
                 return
 
             try:
@@ -85,7 +71,7 @@ class Server:
         except Exception as e:
             resp = xml.build_xmlrpc_fault(10, f'Error inesperado en el servidor: {e}')
         finally:
-            enviar(conn, http.build_http_response(resp))
+            tcp.send(conn, http.build_http_response(resp))
             conn.close()
 
     def serve(self):
