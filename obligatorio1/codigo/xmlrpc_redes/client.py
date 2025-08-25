@@ -1,7 +1,7 @@
 import socket
 from . import xml
 from . import http
-import tcp
+from . import tcp
 
 class Connection:
     def __init__(self, host, port):

@@ -2,7 +2,7 @@ import socket
 import threading
 from . import xml
 from . import http
-import tcp
+from . import tcp
 
 class Server:
     def __init__(self, address):

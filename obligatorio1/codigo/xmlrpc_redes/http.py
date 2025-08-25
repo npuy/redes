@@ -1,4 +1,4 @@
-import tcp 
+from . import tcp
 
 def get_http_request(conn):
     # Lee un request HTTP desde el socket y devuelve start line, headers y body
