@@ -16,7 +16,7 @@ def receive(conn):
     conn.settimeout(10)  # 10 segundos máximo por operación de recv/send - LO DIMOS EN LA CARTILLA
     data = b''
     while b'\r\n\r\n' not in data:
-        chunk = conn.recv(4096)
+        chunk = conn.recv(8)
         if not chunk: 
             return
         data = data + chunk
@@ -40,6 +40,6 @@ def receive(conn):
 
     size = int(headers.get('content-length', '0')) #devuelve 0 si no encuentra la clave content-length
     while len(body) < size:
-        body = body + conn.recv(size - len(body))
+        body = body + conn.recv(8)
 
     return start_line_first, start_line_second, start_line_third, headers, body
