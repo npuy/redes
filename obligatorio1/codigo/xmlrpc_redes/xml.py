@@ -1,7 +1,16 @@
 import xml.etree.ElementTree as ET
 import datetime as dt
 
-# ---------- XML-RPC helpers ----------
+"""
+Módulo de helpers XML-RPC.
+
+Proporciona funciones para:
+- Parsear y construir requests y responses XML-RPC.
+- Convertir entre tipos de datos de Python y elementos XML-RPC.
+- Generar respuestas de error (faults) de XML-RPC.
+
+Usado por el cliente y servidor para enviar y recibir mensajes XML-RPC sobre HTTP/TCP.
+"""
 
 def parse_value(elem):
     if elem.find('int') is not None:
@@ -47,8 +56,7 @@ def build_value_element(pyval):
     elif isinstance(pyval, float):
         ET.SubElement(v, 'double').text = repr(pyval)
     elif isinstance(pyval, dt.datetime):
-        print(pyval.isoformat())
-        ET.SubElement(v, 'dateTime.iso8601').text = pyval.strftime("%Y%m%dT%H:%M:%S")
+        ET.SubElement(v, 'dateTime.iso8601').text = str(pyval.isoformat())
     elif isinstance(pyval, list):
         arr = ET.SubElement(v, 'array')
         data = ET.SubElement(arr, 'data')
