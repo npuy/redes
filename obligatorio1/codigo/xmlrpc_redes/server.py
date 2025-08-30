@@ -12,9 +12,7 @@ class Server:
     def add_method(self, func):
         self.methods[func.__name__] = func 
             
-    def _handle_connection(self, conn, addr):
-
-        conn.settimeout(10)  # 10 segundos máximo por operación de recv/send - LO DIMOS EN LA CARTILLA
+    def _handle_connection(self, conn, addr):        
 
         # Inicializo resp como bytes
         resp = xml.build_xmlrpc_fault(1, "Error interno")
@@ -87,5 +85,6 @@ class Server:
         print(f"XMLRPC Server listening on {self.host}:{self.port}")
         while True:
             conn, addr = s.accept()
+            conn.settimeout(10)  # 10 segundos máximo por operación de recv/send - LO DIMOS EN LA CARTILLA
             t = threading.Thread(target=self._handle_connection, args=(conn, addr), daemon=True)
             t.start()
