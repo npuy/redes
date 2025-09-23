@@ -1,0 +1,57 @@
+Pregunta 1 (3 puntos) -------------------------------------------------------------------
+a) Describa la causa por las que se produce congestión en la red.
+b) Nombre y explique dos síntomas que podemos ver en una red cuando está 
+congestionada.
+c) Describa brevemente que mecanismo utiliza TCP para detectar estos síntomas.
+
+a) La congestion en la red ocurre a causa de que se supera el ancho de banda de forma 
+continua en un lugar de la red. Se envian mas paquetes de los que puede soportar un nodo.
+b) Perdida de paquetes: esto ocurre principalmente cuando un paquete llega a un nodo con 
+el buffer lleno el nodo descarta el paquete entrante y ese paquete se "pierde".
+c) --
+
+Pregunta 2 (3 puntos) -------------------------------------------------------------------
+Dispone de un enlace corto de 10 metros a través del cual un emisor puede transmitir a 
+una velocidad de 150 bits/segundo en ambos sentidos. Suponga que los paquetes de 
+datos tienen una longitud de 100.000 bits y los paquetes que contienen solo comandos de
+control (por ejemplo, ACK o de acuerdo) tienen una longitud de 200 bits. Suponga también
+que hay N conexiones en paralelo y que cada una utiliza 1/N del ancho de banda del 
+enlace. Considere ahora el protocolo HTTP y suponga que cada objeto descargado es de 
+100 kbytes de largo y que el objeto inicialmente descargado contiene 10 objetos 
+referenciados procedentes del mismo emisor. ¿Tiene sentido en este caso realizar 
+descargas en paralelo mediante instancias paralelas de HTTP no persistente? Considere 
+ahora HTTP persistente. ¿Cabe esperar alguna ventaja significativa respecto del caso no 
+persistente? Justifique y explique su respuesta.
+
+Pregunta 3 (4 puntos) -------------------------------------------------------------------
+a) Defina los sockets, y cuál es su utilidad.
+b) ¿Qué protocolos soporta? Describa someramente las diferencias.
+c) Considere una aplicación servidor. Para cada protocolo considerado en la 
+respuesta anterior, describa las primitivas que se deben ejecutar para atender 
+solicitudes de clientes.
+
+Problema 1 (10 puntos) -------------------------------------------------------------------
+Considere esta topología en cadena, donde los enlaces son full-dúplex, y cada nodo
+utiliza la técnica de almacenamiento y reenvío:
+A ---- B ---- C ---- D ---- E
+A envía paquetes a E usando un RDT. Cada enlace puede trasmitir un paquete por
+segundo, y se pueden despreciar todas las fuentes de retardo excepto el de trasmisión.
+a) ¿Cuál es el RTT entre A y E?
+b) ¿Cuál es el throughput de un protocolo stop-and-wait que se ejecuta en A en
+ausencia de pérdidas?
+c) Si A decide utilizar un protocolo de ventana deslizante, ¿cuál es el tamaño óptimo
+de la ventana? ¿Cuál es el throughput que se consigue con ese tamaño de
+ventana?
+d) Suponga que A utiliza el protocolo de ventana deslizante con un tamaño de
+ventana cuatro. Manteniendo la hipótesis de que no existen pérdidas, ¿cuál es el
+throughput? ¿Cuál es la utilización del enlace B-C? (por ejemplo, si el enlace
+puede trasmitir 100 paquetes por segundo, y el throughput es 10 paquetes por
+segundo, la utilización es 0.1).
+e) Considere ahora un protocolo de ventana deslizante con el tamaño de ventana
+hallado en la parte c). Suponga que debido a un virus se descartan los paquetes
+con número de secuencia impar; el protocolo de ventana deslizante arranca en 1.
+Asuma además que el emisor tiene un timeout de 40 segundos, y que el receptor
+envía a un buffer los paquetes fuera de orden hasta poder entregarlos en orden a
+la aplicación.
+¿Cuántos paquetes tiene este buffer 35 segundos después que el emisor comenzó
+a trasmitir el primer paquete?

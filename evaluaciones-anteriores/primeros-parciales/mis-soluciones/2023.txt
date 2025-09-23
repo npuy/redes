@@ -1,0 +1,100 @@
+Pregunta 1 (12 puntos) ----------------------------------------------------------------------------
+a) Compare conmutación de circuitos y conmutación de paquetes.
+b) Para cada tipo de conmutación, mencione una aplicación que se beneficia de la misma.
+c) ¿Qué significa que un conmutador implementa el método de conmutación de almacenamiento 
+y reenvío (store&forward)?
+d) ¿Que retardos introduce este modo de funcionamiento?
+
+a) En la conmutacion de cirtuitos los recursos de la red se recerban para cada conexion que se 
+realiza, esto es util en el caso que se requiera un ancho de banda fijo, el problema de esto es que
+si no hay un trafico constante de informacion se desperdician los recursos reservados.
+Al contrario la conmutacion de paquetes utiliza los recursos a demanada, esto permite que no haya 
+recursos reservados que se desperdicien, aunque no puede asegurar un ancho de banda fijo.
+b) Los servicios de telefonia se benefician de la conmutacion de circuitos puesto que al reservar 
+un ancho de banda fijo se puede mantener una comunicacion sin cortes. 
+c) Significa que el conmutador guarda la informacion que le llega y espera a que se hayan enviado 
+todos los paquetes anteriores para luego mandar ese paquete que recibio. (Guarda el paquete hasta
+que este disponible el canal para enviarlo)
+d) Este modo de funcionamiento introduce el retardo de cola, puesto que un paquete tiene que esperar
+a que el resto de paquetes guardados sean enviados.
+
+Pregunta 2 (12 puntos) ----------------------------------------------------------------------------
+a) Dado un protocolo RDT, mencione y justifique qué mecanismos se deben agregar para 
+soportar un canal con errores de bit y pérdidas.
+b) Explique por qué a los protocolos RDT se dice que son de parada y espera (stop&wait).
+c) Mencione las dos alternativas vistas en el curso para mejorar el rendimiento de los protocolos 
+de parada y espera. Explique con mayor detalle una de ellas.
+
+a) Se deben agregar mecanismos de deteccion de errores como Checksum para detectar los errores de 
+bit y se deben agregar numeros de secuencia para identificar el orden en el cual llegan los 
+paquetes.
+b) Los protocolos RDT son de parada y espera porque para verificar que no hubieron perdidas, luego
+de enviar uno o varios paquetes se debe verificar que estos llegaron (mediante un mensaje ACK) para 
+seguir enviando el resto, paran y esperan la confirmacion para seguir enviando.
+c) Las dos alternativas vistas son GBN (go back n) y SR (selective repetition (creo que la r esra esto)) 
+GBN se basa en la idea de enviar varios paquetes en secuencia y si el receptor recibe paquetes
+fuera de orden los descarta y envia un mensaje NACK avisando al emisor que no llego un paquete 
+determinado, en este caso cuando el emisor recibe un mensaje NACK re-envia el paquete con numero
+de secuencia igual al NACK y todos los siquietes, por eso el nombre.
+
+Pregunta 3 (8 puntos) ----------------------------------------------------------------------------
+Suponga que existe un enlace de microondas a 10 Mbps entre un satélite geoestacionario (situado a 
+36000 Km de altura sobre el Ecuador) y su estación base en la Tierra. El satélite toma una fotografía 
+digital por minuto y la envía a la estación base. La velocidad de propagación es 2,4 × 10^8 
+metros/segundo.
+a) ¿Cuál es el retardo de propagación del enlace?
+b) ¿Cuál es el producto ancho de banda-retardo, R × dprop?
+c) Sea x el tamaño de la fotografía. ¿Cuál es el valor mínimo de x para que el enlace de 
+microondas esté transmitiendo continuamente?
+
+a) dprop = vprop / distancia = 2.4 x 10^8m/s / 36000km = 2400.000 / 36.000 = 2400/36 = 50 s
+b) 10 Mbps x 50 s = 100 Mb
+c) Se pueden enviar 100 Mb por segundo y se envia una foto por minuto => el tamaño minimo para 
+ocupar todo el ancho de banda es de 6000 Mb = 6 Gb
+
+Pregunta 4 (10 puntos) ----------------------------------------------------------------------------
+a) Explique la necesidad multiplexar/demultiplexar en capa de transporte, y relaciónelo con el 
+concepto de proceso.
+b) Detalle la demultiplexión con TCP, y diga en qué se diferencia con la de UDP.
+
+a) Es necesario la multiplexacion/demultiplexacion porque lo que queremos comunicar por una red 
+de computadoras no son solamente los host sino que queremos comunicar los procesos corriendo en 
+dicho host, para esto es necesario asignarle un id (nro de puerto) a cada proceso en un host y 
+al enviar un mensaje debemos identificar el proceso receptor mediante ese puerto, se utilizan
+nros de puerto y no nros de proceso para desligarlo de la arquitectura y hacerlo comun a todos los
+host.
+b) La demultiplexacion TCP a diferencia de UDP, como se basa en una conexion utiliza tanto el ip y 
+numero de puerto de destino como los de origen para identificar el socket de destino, a exepcion 
+de el mensaje de inicio de conexion, un paquete con mismo numero de ip y puerto de destino 
+pueden ser enviados a diferentes sockets dependiendo del numero de ip y puerto de origen.
+
+Pregunta 5 (8 puntos) ----------------------------------------------------------------------------
+Considere la siguiente cadena de caracteres ASCII capturados con Wireshark a partir de una conexión
+TCP: 
+HTTP/1.1 200 OK<cr><lf>
+Date: Sun, 10 Sep 2023 19:53:29 GMT<cr><lf>
+Server: Apache<cr><lf>
+Last-Modified: Fri, 17 Sep 2021 19:26:14 GMT<cr><lf>
+Accept-Ranges: bytes<cr><lf>
+Vary: Accept-Encoding,User-Agent<cr><lf>
+Content-Encoding: gzip<cr><lf>
+Content-Length: 12038<cr><lf>
+Keep-Alive: timeout=15, max=93<cr><lf>
+Connection: Keep-Alive<cr><lf>
+Content-Type: text/html<cr><lf>
+Set-Cookie: ABCD=abcd; expires=Mon, 11-Sep-2023 01:53:29 GMT; path=/; Httponly<cr><lf>
+<cr><lf>
+Los caracteres <cr><lf> son caracteres de retorno de carro y avance de línea (es decir, la cadena de
+caracteres <cr> en el texto representa el único carácter de retorno de carro).
+Responda las siguientes preguntas, justificando las respuestas en base a la captura:
+a) ¿Qué parte del mensaje muestra la captura, y a qué protocolo corresponde?
+b) ¿Quién envía el mensaje, el iniciador de la conexión o el que la aceptó?
+c) ¿Es una conexión persistente o no persistente? 
+d) ¿Qué puede decir sobre el cuerpo del mensaje?
+
+a) Muestra los headers de una respuesta HTTP version 1.1.
+b) Lo envia el que acepto la conexion, un servidor Apache.
+c) Una conexion persistente significa que dentro de una misma conexion TCP se pueden hacer mas de 
+una request HTTP. No persistente es que luego de completar la solicitud se cierra la conexion TCP
+d) Sabemos que es un documento HTML por el Content-Type y que sumando el tamano de los headers 
+tiene un tamano de 12038 bytes. Tambien sabemos que el contendio esta encodeado con gzip.

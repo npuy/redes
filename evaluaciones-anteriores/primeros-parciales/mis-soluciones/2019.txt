@@ -1,0 +1,121 @@
+Pregunta 1 (6 puntos) ------------------------------------------------------------------------
+Considere un paquete de longitud L que tiene su origen en el sistema terminal A y que 
+viaja a través de tres enlaces consecutivos hasta un sistema terminal de destino B. 
+Estos tres enlaces están conectados mediante dos dispositivos de conmutación de 
+paquetes. Sean di, si y Ri la longitud, la velocidad de propagación y la velocidad de 
+transmisión del enlace i, para i = 1, 2, 3. 
+Los dispositivos de conmutación de paquetes retardan cada paquete un tiempo dproc .
+Suponiendo que no se producen retardos de cola, ¿cuál es el retardo total terminal a 
+terminal del paquete en función de di, si, Ri (i = 1, 2, 3) y L?
+
+dtotal = R1/L + d1/s1 + dproc + R2/L + d2/s2 + dproc + R3/L + d3/s3
+
+Pregunta 2 (6 puntos) ------------------------------------------------------------------------
+Comente brevemente los conceptos de control de congestión y control de flujo en TCP.
+
+--
+
+Pregunta 3 (9 puntos) ------------------------------------------------------------------------
+Mediante un navegador se descargó por primera vez el archivo de texto 
+http://europa.eu/hola.txt
+Indique la secuencia de mensajes de Capa de Aplicación y de Capa de Transporte que se 
+intercambian. Para cada mensaje especifique a qué capa pertenece, a qué protocolo, el tipo de 
+mensaje, y las direcciones y puertos involucrados, según corresponda.
+
+Se comieza enviando una request DNS para la ip del servidor europa.eu.
+Para esto se utiliza el protocolo UDP y se realiza la consulta al puerto 53.
+Luego se debe hacer una request HTTP para esto se debe crear una conexion TCP.
+Se inicia una request de conexion a la ip obtenida con DNS y el puerto 80.
+Se envia SYN por TCP.
+Se recibe SYNACK desde el servidor.
+Se envia ACK incluyendo la peticion HTTP: GET /hola.txt HTTP/x.y
+Se recibe la respuesta HTTP con el txt: HTTP/x.y 200 OK (u otra respuesta si hay algun error).
+
+Pregunta 4 (6 puntos) ------------------------------------------------------------------------
+Mencione y explique brevemente en que consisten las dos funciones fundamentales de la capa de
+red.
+
+-- 
+
+Pregunta 5 (8 puntos) ------------------------------------------------------------------------
+a) Dibuje las FSM del emisor y el receptor para RDT 2.0.
+b) Explique cuál es el fallo fundamental de este modelo, y cómo se puede resolver.
+
+-- 
+
+Problema 1 (15 puntos) ------------------------------------------------------------------------
+Se desea implementar una aplicación con una arquitectura cliente-servidor de intercambio
+de mensajes que cumpla con las siguientes características:
+•El servidor espera conexiones TCP en todas sus interfaces en el puerto 8081.
+•Los clientes envían dos tipos de mensajes: 
+    I. ECHO: texto\n
+    II. EXIT \n
+•Al recibir un mensaje de tipo ECHO el servidor debe contestar al cliente con texto.
+•Al recibir un mensaje de tipo EXIT el servidor deberá contestarle “CLOSE 
+ip_cliente”  donde ip_cliente es la ip del cliente que envió el comando y cerrar la 
+conexión con dicho cliente.
+Se pide:
+a) Implemente en un lenguaje de alto nivel, utilizando las primitivas de la API de 
+sockets del curso, el programa que ejecuta el servidor.
+b) Implemente en un lenguaje de alto nivel, utilizando las primitivas de la API de 
+sockets del curso, el programa que ejecuta un cliente que envía los mensajes I y II.
+
+SERVIDOR ==============================================================
+connection_handler (conn) {
+    fin = false
+    while (not fin){
+        data = ''
+        while (not data.include('\n')){
+            data = data + conn.recieve()
+        }
+        if (data.startWith('ECHO')){
+            message = data.obtenerMensaje() // sacar ECHO: y \n.
+            while (mensaje) {
+                mensaje = conn.send(mensaje)
+        }
+        if (data.startWith(EXIT)){
+            fin = true
+            ip_cliente = conn.conn_data()
+            message = 'CLOSE ' + ip_cliente
+            while (mensaje) {
+                mensaje = conn.send(mensaje)
+            }
+        }
+    }
+    conn.close()
+}
+main () {
+    master = socket.tcp()
+    master = master.bind("*", 8081)
+    server = master.listen()
+    while true {
+        conn = server.accept()
+        thread.new(connection_handler, conn)
+    }
+}
+SERVIDOR ==============================================================
+
+CLIENTE ===============================================================
+enviar (conn, message) {
+    while (message) {
+        message = conn.send(message)
+    }
+}
+recibir (conn) {
+    data = ''
+    while (not data.include(\n)) {
+        data = data + conn.recieve()
+    }
+    return data
+}
+main () {
+    master = socket.tcp()
+    conn = master.connect(ip_servidor, 8081)
+    enviar(conn, 'ECHO texto\n')
+    data = recibir(conn)
+    print(data)
+    enviar(conn, 'EXIT \n')
+    data = recibir(conn)
+    print(data)
+}
+CLIENTE ===============================================================

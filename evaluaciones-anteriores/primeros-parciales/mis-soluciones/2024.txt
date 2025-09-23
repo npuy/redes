@@ -1,0 +1,65 @@
+Pregunta 1 (12 puntos) ----------------------------------------------------------------------------
+Suponga que desde la dirección jefe@redes.uy se envía un correo electrónico a 
+empleado@cables.uy, con asunto “Deseo comprar cables” y cuerpo del mensaje “¿Cuánto salen 
+15 metros de cable Ethernet Cat. 6?”.
+a) ¿Cómo se puede obtener el servidor de correo asociado a cables.uy? Indique el protocolo 
+y los mensajes intercambiados entre el host del usuario y el servidor que le proporcionará 
+dicha información.
+b) Una vez obtenido el servidor de correo asociado a cables.uy, ¿qué protocolo se utiliza para 
+enviar el correo electrónico mencionado? Indique la secuencia de comandos necesarios 
+para realizar el envío desde el punto de vista del servidor de correos de    redes.uy   .
+c) Si  empleado@cables.uy  desea  leer los correos electrónicos de su bandeja de entrada, 
+¿qué protocolos puede usar? Realice una breve explicación de cada uno y mencione qué 
+diferencias hay entre ellos.
+
+a) Se debe realizar una request DNS para el registro MX del dominio cables.uy, luego que se recibe 
+la host del servidor de correos para el dominio cables.uy se debe realizar una request DNS de ese 
+host solicitando el registro A de ese host.
+
+Pregunta 2 (8 puntos) ----------------------------------------------------------------------------
+a) Suponga que un navegador web obtiene un objeto mediante el protocolo HTTP. ¿Cómo 
+sabe el tipo de este objeto para representarlo correctamente en pantalla? Por ejemplo, 
+cómo sabe si es una imagen jpeg, gif, o un texto?
+b) Explique el mecanismo GET condicional comentando qué información se incluye para ello 
+en la cabecera de HTTP, cómo es utilizada y cuál es el beneficio que se busca con su uso.
+
+a) Se fija en la cabecera Content Type, que por ejemplo si el documento es de tipo HTML la cabecera
+seria Content Type: text/html\r\n (notar que se incluye el retorno de carro y salto de linea para 
+indicar el fin de la cabecera).
+b) El GET condicional se utiliza para posiblilitar una implementacion de cache ya sea en un servidor 
+proxy o mismo dentro del navegador, la idea es realizar un GET de un recurso y solo retornar el
+recurso si fue modificado, en caso de no retornar el recurso se utiliza el guardado en cache, esto 
+se utiliza para mejorar los tiempos de respuesta y reducir el uso de la red.
+
+Pregunta 3 (10 puntos) ----------------------------------------------------------------------------
+a) Enumere y explique dos ventajas y dos desventajas que percibe una aplicación al usar 
+UDP como protocolo de transporte, en comparación con utilizar TCP.
+b) Mencione una aplicación que utilice UDP como capa de transporte y a partir de su 
+respuesta de la parte a), fundamente porque se podría haber tomado esa decisión de 
+diseño.
+
+a) Como ventajas estan: que no requiere de una conexion esto permite que el envio del mensaje sea 
+mas veloz porque no requiere de los pasos previos a la conexion (1 RTT), tambien que la no tener 
+control de congestion se tiene el control completo de en que momento se envia el mensaje.
+Como desventajas estan el hecho de que no asegura que lleguen en orden ni que lleguen todos los 
+paquetes, ademas el hecho de que no tenga control de congestion deja a manos del programador de 
+la aplicacion controlar que no se genere la congestion.
+b) Por ejemplo DNS utiliza UDP dado que prioriza la velocidad para enviar las consultas para resolver
+los dominios, si usase TCP demoraria practicamente 3 veces mas porque ademas de la carga util de la 
+consulta DNS se deberian de enviar los mensajes TCP de conexion SYN y SYNACK.
+
+Pregunta 4 (8 puntos) ----------------------------------------------------------------------------
+Considere el protocolo de transferencia de datos fiable RDT 2.2:
+a) ¿Qué problemas pueden surgir cuando se utiliza este protocolo en un canal que puede 
+corromper y perder paquetes?
+b) ¿Qué se debe agregar/modificar a este protocolo para que pueda realizar la transferencia 
+fiable en un canal que puede corromper y perder paquetes? Justifique.
+
+Pregunta 5 (12 puntos) ----------------------------------------------------------------------------
+La computadora A necesita enviar un mensaje que consta de 9 paquetes a la computadora B, 
+utilizando un protocolo de ventana deslizante de tamaño 3 y Go-Back-N como estrategia de transporte 
+confiable. Todos los paquetes están listos y disponibles de inmediato para su transmisión.
+Si uno de cada 5 paquetes que A transmite se pierde, pero nunca se pierde ningún ACK de B, ¿cuál es 
+el número de paquetes que A transmitirá para enviar el mensaje completo a B? Justifique su respuesta. 
+Puede asumir que el rango de números de secuencia es mucho más grande que el tamaño de la 
+ventana.

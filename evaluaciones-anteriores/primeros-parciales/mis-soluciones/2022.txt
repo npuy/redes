@@ -1,0 +1,72 @@
+Pregunta 1 (10 puntos) -----------------------------------------------------------------------------
+a) Describa qué es una red de conmutación de circuitos y una red de conmutación de paquetes, y
+explique al menos una ventaja de cada una sobre la otra.
+b) En una red de conmutación de circuitos, explique los dos mecanismos vistos en el curso para
+implementar los circuitos dentro de un enlace.
+
+Pregunta 2 (10 puntos) -----------------------------------------------------------------------------
+Dado un protocolo RDT que funciona sobre un canal sin pérdidas ni errores, mencione y justifique qué
+mecanismos se deben agregar para soportar:
+a) Un canal con errores de bit.
+b) Un canal con errores de bit y pérdidas. Dibuje la máquina de estados del emisor para este último
+caso.
+
+a) Se debe agregar un mensaje de confirmacion/negacion ACK/NACK que el receptor envia al emisor 
+avisando que el paquete que recibio de forma correcta. En si no se recibe de forma correcta se 
+debe retrasmitir. Para manejar los paquetes duplicados se puede implementar un numero de secuencia
+para identificar el paquete que se espera enviar/recibir.
+b) Lo que falta agregar es un tiempo de espera maximo luego de enviar un paquete, si no se recibio 
+una confirmacion del paquete se vuelve a enviar. Notar que si se pierde el paquete ACK igual se vuelve
+a enviar nuevamente el paquete y el receptor debe volver a enviar el ACK al recibir el paquete 
+duplicado.
+
+Pregunta 3 (10 puntos) -----------------------------------------------------------------------------
+a) Explique las características del modelo de capas que favorecen el desarrollo y actualización de las
+redes de datos.
+b) ¿Cómo se relacionan dos capas contiguas del modelo?
+c) ¿Qué capas se presentan en el modelo Internet presentado en el curso y qué función cumple cada
+una de ellas?
+
+a) El modelo de capas favorecen el desarollo y actualizacion de las redes de datos porque abstraen 
+la implementacion de la capa a una intefaz. Es decir la implementacion solo se debe de preocupar de 
+satisfacer la intefaz (generalmente especificada en un RFC) y utilizar la interfaz de la capa inferior
+es decir si se quiere implementar de una forma distinta, mientras que respete la intefaz 
+automaticamente puede funcionar con el resto del ecosistema de las redes de datos.
+b) Las capas se relacionan mediante una interfaz por lo general definida en un RFC.
+c) El modelo Internet presentado en el curso presenta 5 capas:
+Aplicacion: Utiliza la capa de transporte para implementar cualquier aplicacion de requiera de 
+una comunicacion entre dos terminales en la red, estas aplicaciones son las que generalmente utiliza
+el usuario comun.
+Transporte: Se encarga de transportar mensajes entre procesos especificos entre terminales.
+Red: Se encarga de dirigir los paquetes dentro de la red, crear la ruta que deben seguir.
+Enlace: Se encarga de que el paquete llegue de el enlace actual al siguiente.
+Fisica: Es el medio por donde se transmite el paquete de un enlace a otro.
+
+Pregunta 4 (8 puntos) -----------------------------------------------------------------------------
+Considere los servidores raíz (root servers) de DNS.
+a) ¿Qué tipos de registros y de qué dominios se encuentran configurados en ellos?
+b) ¿Ofrecen la posibilidad de responder consultas recursivas? ¿Por qué?
+
+regunta 5 (12 puntos) -----------------------------------------------------------------------------
+Considere la siguiente cadena de caracteres ASCII capturados con Wireshark a partir de un  mensaje
+HTTP GET enviado por un navegador web, (es decir, este es el contenido real de un mensaje HTTP
+GET). 
+GET /cs453/index.html HTTP/1.1<cr><lf>
+Host: gaia.cs.umass.edu<cr><lf>
+User-Agent: Mozilla/5.0 (Windows;U; Windows NT 5.1; en-US; rv:1.7.2) Gecko/20040804 Netscape/7.2 (ax) <cr><lf>
+Accept:ext/xml, application/xml, application/xhtml+xml, text/html;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5<cr><lf>
+Accept-Language: en-us,en;q=0.5<cr><lf>
+AcceptEncoding: zip,deflate<cr><lf>
+Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7<cr><lf>
+Keep-Alive: 300<cr><lf>
+Connection:keep-alive<cr><lf>
+<cr><lf>
+Los caracteres <cr><lf> son caracteres de retorno de carro y avance de línea (es decir, la cadena de
+caracteres <cr> en el texto representa el único carácter de retorno de carro.
+Responda las siguientes preguntas, indicando en qué parte del mensaje HTTP GET se encuentra,
+justificando las respuestas:
+a) ¿Cuál es la URL del documento solicitado por el navegador?
+b) ¿Qué versión de HTTP está ejecutando el navegador?
+c) ¿El navegador solicita una conexión no persistente o persistente? 
+d) ¿Qué tipo de navegador inicia este mensaje? ¿Por qué es el tipo de navegador necesario en 
+un mensaje de solicitud HTTP?
