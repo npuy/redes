@@ -3,33 +3,34 @@ Enumere y describa los 4 tipos de retardos existentes en la red. ¿Cuál de ello
 un medio dado sin importar la cantidad de información ni estado actual de la red y dispositivos?
 
 Retardo de propagacion:
-Tiempo que le toma a un bit viajar desde un extremo al otro del medio fisico. Solo depende de la 
-velocidad de propagacion en ese medio. (magnitud fisica que no varia)
-Retardo de transmision:
-Tiempo que le toma al nodo ingresar todos los bits a un medio de transmision. Depende del largo (bits) 
-y del ancho de banda del enlace.
+Tiempo que demora un bit de llegar de un punto a otro del enlace. Esta medida es constante segun
+el tipo de enlace, es una medida fisica.
 Retardo de procesamiento:
-Tiempo que le toma al nodo luego de que recibe el paquete tratarlo (Checksum, determinar el enlace de 
-salida) para luego poder volver a enviarlo al siguiente enlace.
+Tiempo que demora un nodo en procesar los encabezados de paquetes para decidir en que enlace re
+enviarlo. Depende del dispositico del nodo y el algoritmo utilizado.
+Retardo de transmision:
+Tiempo que lleva transmitir todos los bits de un paquete a un enlace. Este retardo depende del largo
+del paquete y el dispositivo utilizado.
 Retardo de cola:
-Tiempo que el paquete espera en el buffer de un enlace hasta que todos los paquetes anteriores que 
-estan en cola fueron computados y enviados. Depende del estado de la red. (congestion)
+Tiempo que le toma a un paquete esperar en un nodo a que el resto de paquetes en el buffer sean 
+enviados. Esta retardo depende del estado de la red, del grado de congestion.
 
 Pregunta 2 (3 puntos) --------------------------------------------------------------------------------
 Escriba todos los mensajes de capa de aplicación y/o transporte que envía o recibe un host 
 cuando solicita el recurso http://www.algunsitio.com/index.html
 
-Se empieza con una consulta DNS para recibir la ip del servidor www.algunsitio.com
-El protocolo DNS utiliza el protocolo UDP de la capa de transporte
-Se envia un datagrama UDP con la solicitud de DNS
-Se recibe la respuesta de la solicitud DNS por UDP con la ip del servidor
-Se sigue realizando una peticion HTTP al servidor www.algunsitio.com por el recurso /index.html
-Para esto se crea una conexion TCP con la ip del servidor obtenida en la solicitud DNS y el puerto 80
-El host envia SYN
-Se recibe SYNACK
-Envia ACK y en este paquete ya puede enviar la data donde se ingresa la peticion HTTP
-Se envia la peticion HTTP GET al servidor www.algunsitio.com para el recurso /index.html
-Se recibe la respuesta HTTP correspondiente 
+Primero se obtiene la ip del servidor www.algunsitio.com con el protocolo DNS.
+Este protocolo utiliza el protocolo de la capa de transporte UDP.
+DNS envia un datagrama UDP consultando por el registro A del dominio www.algunsitio.com.
+Se recibe una respuesta por UDP con la direccion ip del dominio.
+Se inicia una peticion HTTP al serivdor con la ip obtenida a travez del protocolo TCP.
+Para esto es necesario crear una conexion TCP:
+Se envia una solicitud de conexion TCP a la ip obtenida al nro de puerto 80. (SYN)
+Se recibe una respuesta de aceptacion de la conexion desde el servidor (SYNACK).
+Se envia confirmacion de que se recibio SYNACK, se envia un ACK donde tambien viaja carga util.
+En este caso la carga util es una solicitud HTTP con el metodo GET (GET /index.html HTTP/1.1).
+(Por ejemplo utilizando la version 1.1 de HTTP).
+Se recibe la respuesta HTTP con el contenido correspondiente (HTTP/1.1 200 OK).
 
 Pregunta 3 (5 puntos) --------------------------------------------------------------------------------
 Suponga que se establece un conexión TCP, con un valor inicial de umbral (ssthresh) de 8 
@@ -41,6 +42,8 @@ b) Indique los estados de los diferentes ciclos de transmisión (arranque lento,
 evitación de la congestión).
 c) ¿Qué valor alcanza la ventana de congestión y el umbral (ssthresh), para el caso de TCP Reno 
 y TCP Tahoe, en el ciclo de transmisión 14?
+
+--
 
 Problema 1 (10 puntos) --------------------------------------------------------------------------------
 Considere un escenario donde un host A envía paquetes simultáneamente a dos hosts B y C
